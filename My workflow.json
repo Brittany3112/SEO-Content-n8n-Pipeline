@@ -1,0 +1,713 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "seo-article",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "34688e45-3ca6-49d5-b382-d0089b160a5a",
+      "name": "Webhook",
+      "webhookId": "5063b07b-dd5c-43a5-aa22-88177c690bee"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=請根據以下資訊，寫一篇繁體中文 SEO 文章。\n\n- 主要關鍵字：{{ $('Webhook').item.json.body.keyword }}\n- 銷售產品：{{ $('Webhook').item.json.body.product }}\n- 讀者情境：{{ $('Webhook').item.json.body.scenario }}\n\n要求：\n1. 文章總長度為 1700–1900 個中文字，目標約 1800 字。\n2. 分成四個自然段落，每段可以使用一個簡短的小標題，不要使用「第一部分、第二部分」這類制式名稱。\n3. 第一段介紹讀者痛點並直接回應關鍵字。\n4. 第二段介紹產品特色，加入 2 個具體使用情境。\n5. 第三段簡單比較 2–3 種相關選擇，並提供實際選購建議。\n6. 第四段提供使用方式、注意事項與總結。\n7. 第一、第二、第三段結尾放置：\n[IMAGE_1]\n[IMAGE_2]\n[IMAGE_3]\n8. 內容要自然、實用、避免重複和灌水。\n9. 不要捏造產品沒有提供的規格、價格、科學驗證、使用者評價或安全保證；資訊不足時請使用保守說法，例如「購買前請確認產品標示」。\n10. 只輸出文章正文，不要輸出 JSON、圖片 Prompt、字數統計或 Markdown code block。"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        304,
+        0
+      ],
+      "id": "0f5547f9-53da-43e1-bb86-9ffab91605e0",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "bSjW3fY1Jb3Omyni",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-image-1",
+          "mode": "list",
+          "cachedResultName": "GPT-IMAGE-1"
+        },
+        "prompt": "={{ $('Code in JavaScript').item.json.image_prompt_2 }}",
+        "options": {
+          "quality": "medium",
+          "size": "1024x1024"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        1360,
+        0
+      ],
+      "id": "8fba4bec-21ea-4dc9-85f9-321558c2ce10",
+      "name": "Generate an image",
+      "credentials": {
+        "openAiApi": {
+          "id": "bSjW3fY1Jb3Omyni",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $input.first().json;\n\nconst text =\n  input.output?.[0]?.content?.find(item => item.type === 'output_text')?.text ??\n  input.output?.[0]?.content?.[0]?.text ??\n  input.output_text ??\n  input.text ??\n  '';\n\nif (!text) {\n  throw new Error('找不到模型輸出文字');\n}\n\nconst start = text.indexOf('[');\nconst end = text.lastIndexOf(']');\n\nif (start === -1 || end === -1 || end <= start) {\n  throw new Error('找不到 JSON 陣列');\n}\n\nconst jsonStr = text.slice(start, end + 1);\n\nlet imagePrompts;\ntry {\n  imagePrompts = JSON.parse(jsonStr);\n} catch (error) {\n  throw new Error(`JSON 解析失敗：${error.message}`);\n}\n\nif (!Array.isArray(imagePrompts) || imagePrompts.length < 3) {\n  throw new Error('圖片 prompt 必須至少 3 個');\n}\n\nreturn [{\n  json: {\n    image_prompt_1: imagePrompts[0].prompt,\n    image_prompt_2: imagePrompts[1].prompt,\n    image_prompt_3: imagePrompts[2].prompt,\n    image_size_1: imagePrompts[0].size || '1024x1024',\n    image_size_2: imagePrompts[1].size || '1024x1024',\n    image_size_3: imagePrompts[2].size || '1024x1024',\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        0
+      ],
+      "id": "9a7e5595-d8b1-4001-b5d1-b805384fa324",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-image-1",
+          "mode": "list",
+          "cachedResultName": "GPT-IMAGE-1"
+        },
+        "prompt": "={{ $json.image_prompt_1 }}",
+        "options": {
+          "quality": "medium",
+          "size": "1024x1024"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        1072,
+        0
+      ],
+      "id": "ff874408-2128-42a7-979d-896e825a2c4c",
+      "name": "Generate an image1",
+      "credentials": {
+        "openAiApi": {
+          "id": "bSjW3fY1Jb3Omyni",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-image-1",
+          "mode": "list",
+          "cachedResultName": "GPT-IMAGE-1"
+        },
+        "prompt": "={{ $('Code in JavaScript').item.json.image_prompt_3 }}",
+        "options": {
+          "quality": "medium",
+          "size": "1024x1024"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        1632,
+        0
+      ],
+      "id": "12183522-fe22-410d-a069-d427d5c32f36",
+      "name": "Generate an image2",
+      "credentials": {
+        "openAiApi": {
+          "id": "bSjW3fY1Jb3Omyni",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=請根據以下文章內容，產生三張圖片的繁體中文生成 Prompt。加入台灣味，上面的標語也要是繁體中文。\n\n文章：{{ $json.output[0].content[0].text }}\n\n請只輸出 JSON 陣列，格式如下：\n[\n  {\"prompt\":\"...\",\"size\":\"1024x1024\"},\n  {\"prompt\":\"...\",\"size\":\"1024x1024\"},\n  {\"prompt\":\"...\",\"size\":\"1024x1024\"}\n]\n不要加任何其他文字，不要使用 Markdown code block。"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        592,
+        0
+      ],
+      "id": "fce3d1dd-5f07-4993-8ae5-b6bdd41197d4",
+      "name": "Message a model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "bSjW3fY1Jb3Omyni",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "={{ $('Webhook').item.json.body.row }}_{{ $('Webhook').item.json.body.keyword }}_{{ $('Webhook').item.json.body.product }}_{{ $('Webhook').item.json.body.scenario }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "138LOMpSnt0kAd07mZct_RhAlEaBdKwJb",
+          "mode": "list",
+          "cachedResultName": "01Marketing",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/138LOMpSnt0kAd07mZct_RhAlEaBdKwJb"
+        },
+        "options": {
+          "folderColorRgb": "#6EFF00"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        160,
+        0
+      ],
+      "id": "9fd822a6-73e3-4e9d-8c00-8fda97338d7f",
+      "name": "Create folder",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "0yFHWd4RBgCyZbPt",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputDataFieldName": "=data",
+        "name": "image1.png",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Create folder').item.json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1216,
+        0
+      ],
+      "id": "8f7ce17b-1461-4a67-b2ec-de1993f24f5f",
+      "name": "Upload file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "0yFHWd4RBgCyZbPt",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputDataFieldName": "=data",
+        "name": "image2.png",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Create folder').item.json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1504,
+        0
+      ],
+      "id": "933db669-64dc-4d2a-a7c3-1eefaa2f34b6",
+      "name": "Upload file1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "0yFHWd4RBgCyZbPt",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputDataFieldName": "=data",
+        "name": "image3.png",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Create folder').item.json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1760,
+        0
+      ],
+      "id": "91023bf0-347f-4668-ad47-7062d0fb2470",
+      "name": "Upload file2",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "0yFHWd4RBgCyZbPt",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const article =\n  $('Message a model').first().json.output[0].content[0].text;\n\nconst image1 = $('Upload file').first().json;\nconst image2 = $('Upload file1').first().json;\nconst image3 = $('Upload file2').first().json;\n\nif (!article) {\n  throw new Error('找不到文章內容');\n}\n\nif (!image1.id || !image2.id || !image3.id) {\n  throw new Error('找不到三張圖片的 Google Drive file ID');\n}\n\nconst url1 = `https://drive.google.com/uc?export=view&id=${image1.id}`;\nconst url2 = `https://drive.google.com/uc?export=view&id=${image2.id}`;\nconst url3 = `https://drive.google.com/uc?export=view&id=${image3.id}`;\n\nconst finalArticle = article\n  .replace(/\\[IMAGE_1\\]/g, `![圖片1](${url1})`)\n  .replace(/\\[IMAGE_2\\]/g, `![圖片2](${url2})`)\n  .replace(/\\[IMAGE_3\\]/g, `![圖片3](${url3})`);\n\nreturn [\n  {\n    json: {\n      article: finalArticle,\n      image_url_1: url1,\n      image_url_2: url2,\n      image_url_3: url3,\n      image_file_id_1: image1.id,\n      image_file_id_2: image2.id,\n      image_file_id_3: image3.id\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        48,
+        320
+      ],
+      "id": "3fde4ed3-f2b8-4f7d-a130-b153ecc9153e",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1FnD3XRmuw_B23JNAbtWJXOz67vuobMS0H9Mzp_wMmHo",
+          "mode": "list",
+          "cachedResultName": "SEO_content",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1FnD3XRmuw_B23JNAbtWJXOz67vuobMS0H9Mzp_wMmHo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1FnD3XRmuw_B23JNAbtWJXOz67vuobMS0H9Mzp_wMmHo/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "文章": "={{ $('Code in JavaScript1').item.json.article }}",
+            "圖片 1": "={{ $('Code in JavaScript1').item.json.image_url_1 }}",
+            "圖片 2": "={{ $('Code in JavaScript1').item.json.image_url_2 }}",
+            "圖片 3": "={{ $('Code in JavaScript1').item.json.image_url_3 }}",
+            "關鍵字": "={{ $('Webhook').item.json.body.keyword }}",
+            "row_number": 0,
+            "資料夾連結": "={{ 'https://drive.google.com/drive/folders/' + $('Create folder').first().json.id }}",
+            "文章連結": "={{ 'https://docs.google.com/document/d/' + $('Create a document').first().json.id + '/edit' }}"
+          },
+          "matchingColumns": [
+            "關鍵字"
+          ],
+          "schema": [
+            {
+              "id": "關鍵字",
+              "displayName": "關鍵字",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "想賣產品",
+              "displayName": "想賣產品",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "情境",
+              "displayName": "情境",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "資料夾連結",
+              "displayName": "資料夾連結",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "文章連結",
+              "displayName": "文章連結",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "文章",
+              "displayName": "文章",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "圖片 1",
+              "displayName": "圖片 1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "圖片 2",
+              "displayName": "圖片 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "圖片 3",
+              "displayName": "圖片 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        688,
+        320
+      ],
+      "id": "5a5b80ed-01f1-4f8f-aae5-c33e1eb8f3cf",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "UhzV6BUsyh4kIFst",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "folderId": "={{ $('Create folder').first().json.id }}",
+        "title": "=SEO文章_{{ $('Webhook').first().json.body.keyword }}"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        272,
+        320
+      ],
+      "id": "8c27b470-75c9-4552-9fb6-1c4304aa7529",
+      "name": "Create a document",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "pJk2IsJ072QbG3i6",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $json.id }}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ $('Code in JavaScript1').item.json.article }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        480,
+        320
+      ],
+      "id": "1d860bc0-2130-4bc5-a973-09931c89ff4c",
+      "name": "Update a document",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "pJk2IsJ072QbG3i6",
+          "name": "Google Docs account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Create folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Message a model1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Generate an image1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate an image1": {
+      "main": [
+        [
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate an image": {
+      "main": [
+        [
+          {
+            "node": "Upload file1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate an image2": {
+      "main": [
+        [
+          {
+            "node": "Upload file2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create folder": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file": {
+      "main": [
+        [
+          {
+            "node": "Generate an image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file1": {
+      "main": [
+        [
+          {
+            "node": "Generate an image2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Create a document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a document": {
+      "main": [
+        [
+          {
+            "node": "Update a document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a document": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "b8fe807c-b883-4e82-a08e-1295ce4682b9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "68e0cfec20005314ffce5e6212c1dd99c17db35ae735d515b8b6027d37d26950"
+  },
+  "nodeGroups": [],
+  "id": "isnkceCutIE44NXU",
+  "tags": []
+}
