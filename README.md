@@ -6,7 +6,6 @@
 
 這是一個以 **n8n、Google Sheets、Google Drive 與 Google Docs** 建立的 SEO 內容生成工具。使用者在 Google Sheet 輸入關鍵字、推廣產品與使用情境後，透過按鈕觸發工作流，產生文章、三張配圖與 Google Docs 成果。
 
-- GitHub：[SEO-Content-n8n-Pipeline](https://github.com/Brittany3112/SEO-Content-n8n-Pipeline)
 - Google Sheet 範例：[開啟 Sheet](https://docs.google.com/spreadsheets/d/1FnD3XRmuw_B23JNAbtWJXOz67vuobMS0H9Mzp_wMmHo/edit?usp=sharing)
 
 ### 功能
@@ -180,7 +179,6 @@ https://example-name.trycloudflare.com
 
 This is an SEO content workflow built with **n8n, Google Sheets, Google Drive, and Google Docs**. A user enters a keyword, product, and scenario in Google Sheets, then triggers the workflow with a button to create an SEO article, three visuals, and a Google Docs result.
 
-- GitHub: [SEO-Content-n8n-Pipeline](https://github.com/Brittany3112/SEO-Content-n8n-Pipeline)
 - Example Google Sheet: [Open Sheet](https://docs.google.com/spreadsheets/d/1FnD3XRmuw_B23JNAbtWJXOz67vuobMS0H9Mzp_wMmHo/edit?usp=sharing)
 
 ## Features
