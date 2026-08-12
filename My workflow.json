@@ -10,8 +10,8 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        0,
-        0
+        -96,
+        -160
       ],
       "id": "34688e45-3ca6-49d5-b382-d0089b160a5a",
       "name": "Webhook",
@@ -28,157 +28,23 @@
         "responses": {
           "values": [
             {
-              "content": "=請根據以下資訊，寫一篇繁體中文 SEO 文章。\n\n- 主要關鍵字：{{ $('Webhook').item.json.body.keyword }}\n- 銷售產品：{{ $('Webhook').item.json.body.product }}\n- 讀者情境：{{ $('Webhook').item.json.body.scenario }}\n\n要求：\n1. 文章總長度為 1700–1900 個中文字，目標約 1800 字。\n2. 分成四個自然段落，每段可以使用一個簡短的小標題，不要使用「第一部分、第二部分」這類制式名稱。\n3. 第一段介紹讀者痛點並直接回應關鍵字。\n4. 第二段介紹產品特色，加入 2 個具體使用情境。\n5. 第三段簡單比較 2–3 種相關選擇，並提供實際選購建議。\n6. 第四段提供使用方式、注意事項與總結。\n7. 第一、第二、第三段結尾放置：\n[IMAGE_1]\n[IMAGE_2]\n[IMAGE_3]\n8. 內容要自然、實用、避免重複和灌水。\n9. 不要捏造產品沒有提供的規格、價格、科學驗證、使用者評價或安全保證；資訊不足時請使用保守說法，例如「購買前請確認產品標示」。\n10. 只輸出文章正文，不要輸出 JSON、圖片 Prompt、字數統計或 Markdown code block。"
+              "content": "=請根據以下資訊，撰寫繁體中文 SEO 文章的「前半部」。\n\n主要關鍵字：{{ $('Webhook').item.json.body.keyword }}\n銷售產品：{{ $('Webhook').item.json.body.product }}\n讀者情境：{{ $('Webhook').item.json.body.scenario }}\n\n只寫一個主標題與前兩個完整段落，總長度必須為 1,100–1,200 個繁體中文字；每個段落至少 520 個繁體中文字。\n請用具體情境、比較條件、使用限制與實際做法補足內容，不要在內容完整以前提早總結或結束。\n\n輸出格式必須依序為：\n主標題（第一行；自然包含主要關鍵字）\n第一個動態小標題（單獨一行；要對應第一段內容）\n第一段：說明讀者痛點，直接回應主要關鍵字，並在段落結尾只放一次 [IMAGE_1]。\n第二個動態小標題（單獨一行；要對應第二段內容）\n第二段：介紹產品特色與至少兩個合理的使用情境，並在段落結尾只放一次 [IMAGE_2]。\n\n內容自然、實用；不要捏造產品規格、價格、研究證據或使用者評價。\n\n輸出前確認：前半部總長度至少 1,100 個繁體中文字；[IMAGE_1] 與 [IMAGE_2] 各只出現一次，且文章結尾是 [IMAGE_2]。若不足 1,100 字，請先補充具體內容再輸出。"
             }
           ]
         },
         "builtInTools": {},
-        "options": {}
+        "options": {
+          "maxTokens": 3000
+        }
       },
       "type": "@n8n/n8n-nodes-langchain.openAi",
       "typeVersion": 2.3,
       "position": [
-        304,
-        0
+        256,
+        -160
       ],
       "id": "0f5547f9-53da-43e1-bb86-9ffab91605e0",
       "name": "Message a model",
-      "credentials": {
-        "openAiApi": {
-          "id": "bSjW3fY1Jb3Omyni",
-          "name": "OpenAI account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "resource": "image",
-        "modelId": {
-          "__rl": true,
-          "value": "gpt-image-1",
-          "mode": "list",
-          "cachedResultName": "GPT-IMAGE-1"
-        },
-        "prompt": "={{ $('Code in JavaScript').item.json.image_prompt_2 }}",
-        "options": {
-          "quality": "medium",
-          "size": "1024x1024"
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.openAi",
-      "typeVersion": 2.3,
-      "position": [
-        1360,
-        0
-      ],
-      "id": "8fba4bec-21ea-4dc9-85f9-321558c2ce10",
-      "name": "Generate an image",
-      "credentials": {
-        "openAiApi": {
-          "id": "bSjW3fY1Jb3Omyni",
-          "name": "OpenAI account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "jsCode": "const input = $input.first().json;\n\nconst text =\n  input.output?.[0]?.content?.find(item => item.type === 'output_text')?.text ??\n  input.output?.[0]?.content?.[0]?.text ??\n  input.output_text ??\n  input.text ??\n  '';\n\nif (!text) {\n  throw new Error('找不到模型輸出文字');\n}\n\nconst start = text.indexOf('[');\nconst end = text.lastIndexOf(']');\n\nif (start === -1 || end === -1 || end <= start) {\n  throw new Error('找不到 JSON 陣列');\n}\n\nconst jsonStr = text.slice(start, end + 1);\n\nlet imagePrompts;\ntry {\n  imagePrompts = JSON.parse(jsonStr);\n} catch (error) {\n  throw new Error(`JSON 解析失敗：${error.message}`);\n}\n\nif (!Array.isArray(imagePrompts) || imagePrompts.length < 3) {\n  throw new Error('圖片 prompt 必須至少 3 個');\n}\n\nreturn [{\n  json: {\n    image_prompt_1: imagePrompts[0].prompt,\n    image_prompt_2: imagePrompts[1].prompt,\n    image_prompt_3: imagePrompts[2].prompt,\n    image_size_1: imagePrompts[0].size || '1024x1024',\n    image_size_2: imagePrompts[1].size || '1024x1024',\n    image_size_3: imagePrompts[2].size || '1024x1024',\n  }\n}];"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        896,
-        0
-      ],
-      "id": "9a7e5595-d8b1-4001-b5d1-b805384fa324",
-      "name": "Code in JavaScript"
-    },
-    {
-      "parameters": {
-        "resource": "image",
-        "modelId": {
-          "__rl": true,
-          "value": "gpt-image-1",
-          "mode": "list",
-          "cachedResultName": "GPT-IMAGE-1"
-        },
-        "prompt": "={{ $json.image_prompt_1 }}",
-        "options": {
-          "quality": "medium",
-          "size": "1024x1024"
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.openAi",
-      "typeVersion": 2.3,
-      "position": [
-        1072,
-        0
-      ],
-      "id": "ff874408-2128-42a7-979d-896e825a2c4c",
-      "name": "Generate an image1",
-      "credentials": {
-        "openAiApi": {
-          "id": "bSjW3fY1Jb3Omyni",
-          "name": "OpenAI account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "resource": "image",
-        "modelId": {
-          "__rl": true,
-          "value": "gpt-image-1",
-          "mode": "list",
-          "cachedResultName": "GPT-IMAGE-1"
-        },
-        "prompt": "={{ $('Code in JavaScript').item.json.image_prompt_3 }}",
-        "options": {
-          "quality": "medium",
-          "size": "1024x1024"
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.openAi",
-      "typeVersion": 2.3,
-      "position": [
-        1632,
-        0
-      ],
-      "id": "12183522-fe22-410d-a069-d427d5c32f36",
-      "name": "Generate an image2",
-      "credentials": {
-        "openAiApi": {
-          "id": "bSjW3fY1Jb3Omyni",
-          "name": "OpenAI account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "modelId": {
-          "__rl": true,
-          "value": "gpt-4o",
-          "mode": "list",
-          "cachedResultName": "GPT-4O"
-        },
-        "responses": {
-          "values": [
-            {
-              "content": "=請根據以下文章內容，產生三張圖片的繁體中文生成 Prompt。加入台灣味，上面的標語也要是繁體中文。\n\n文章：{{ $json.output[0].content[0].text }}\n\n請只輸出 JSON 陣列，格式如下：\n[\n  {\"prompt\":\"...\",\"size\":\"1024x1024\"},\n  {\"prompt\":\"...\",\"size\":\"1024x1024\"},\n  {\"prompt\":\"...\",\"size\":\"1024x1024\"}\n]\n不要加任何其他文字，不要使用 Markdown code block。"
-            }
-          ]
-        },
-        "builtInTools": {},
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.openAi",
-      "typeVersion": 2.3,
-      "position": [
-        592,
-        0
-      ],
-      "id": "fce3d1dd-5f07-4993-8ae5-b6bdd41197d4",
-      "name": "Message a model1",
       "credentials": {
         "openAiApi": {
           "id": "bSjW3fY1Jb3Omyni",
@@ -209,8 +75,8 @@
       "type": "n8n-nodes-base.googleDrive",
       "typeVersion": 3,
       "position": [
-        160,
-        0
+        80,
+        -160
       ],
       "id": "9fd822a6-73e3-4e9d-8c00-8fda97338d7f",
       "name": "Create folder",
@@ -242,8 +108,8 @@
       "type": "n8n-nodes-base.googleDrive",
       "typeVersion": 3,
       "position": [
-        1216,
-        0
+        544,
+        80
       ],
       "id": "8f7ce17b-1461-4a67-b2ec-de1993f24f5f",
       "name": "Upload file",
@@ -275,8 +141,8 @@
       "type": "n8n-nodes-base.googleDrive",
       "typeVersion": 3,
       "position": [
-        1504,
-        0
+        832,
+        80
       ],
       "id": "933db669-64dc-4d2a-a7c3-1eefaa2f34b6",
       "name": "Upload file1",
@@ -308,8 +174,8 @@
       "type": "n8n-nodes-base.googleDrive",
       "typeVersion": 3,
       "position": [
-        1760,
-        0
+        1088,
+        80
       ],
       "id": "91023bf0-347f-4668-ad47-7062d0fb2470",
       "name": "Upload file2",
@@ -322,7 +188,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const article =\n  $('Message a model').first().json.output[0].content[0].text;\n\nconst image1 = $('Upload file').first().json;\nconst image2 = $('Upload file1').first().json;\nconst image3 = $('Upload file2').first().json;\n\nif (!article) {\n  throw new Error('找不到文章內容');\n}\n\nif (!image1.id || !image2.id || !image3.id) {\n  throw new Error('找不到三張圖片的 Google Drive file ID');\n}\n\nconst url1 = `https://drive.google.com/uc?export=view&id=${image1.id}`;\nconst url2 = `https://drive.google.com/uc?export=view&id=${image2.id}`;\nconst url3 = `https://drive.google.com/uc?export=view&id=${image3.id}`;\n\nconst finalArticle = article\n  .replace(/\\[IMAGE_1\\]/g, `![圖片1](${url1})`)\n  .replace(/\\[IMAGE_2\\]/g, `![圖片2](${url2})`)\n  .replace(/\\[IMAGE_3\\]/g, `![圖片3](${url3})`);\n\nreturn [\n  {\n    json: {\n      article: finalArticle,\n      image_url_1: url1,\n      image_url_2: url2,\n      image_url_3: url3,\n      image_file_id_1: image1.id,\n      image_file_id_2: image2.id,\n      image_file_id_3: image3.id\n    }\n  }\n];"
+        "jsCode": "const article =\n  $('Validate article length Code node').first().json.article;\n\nconst image1 = $('Upload file').first().json;\nconst image2 = $('Upload file1').first().json;\nconst image3 = $('Upload file2').first().json;\n\nif (!article) {\n  throw new Error('找不到文章內容');\n}\n\nif (!image1.id || !image2.id || !image3.id) {\n  throw new Error('找不到三張圖片的 Google Drive file ID');\n}\n\nconst url1 = `https://drive.google.com/uc?export=view&id=${image1.id}`;\nconst url2 = `https://drive.google.com/uc?export=view&id=${image2.id}`;\nconst url3 = `https://drive.google.com/uc?export=view&id=${image3.id}`;\n\nlet finalArticle = article;\n\nfor (const marker of ['[IMAGE_1]', '[IMAGE_2]', '[IMAGE_3]']) {\n  const firstIndex = finalArticle.indexOf(marker);\n\n  if (firstIndex === -1) {\n    throw new Error(`文章中找不到 ${marker}`);\n  }\n\n  const firstPart = finalArticle.slice(0, firstIndex + marker.length);\n  const remainingPart = finalArticle\n    .slice(firstIndex + marker.length)\n    .replaceAll(marker, '');\n\n  finalArticle = firstPart + remainingPart;\n}\n\n// 強制每個 marker 獨立成段，確保圖片前後都有換行。\nfor (const marker of ['[IMAGE_1]', '[IMAGE_2]', '[IMAGE_3]']) {\n  finalArticle = finalArticle.replaceAll(\n    marker,\n    `\\n\\n${marker}\\n\\n`\n  );\n}\n\n// 避免原本已有換行時留下太多空白行。\nfinalArticle = finalArticle\n  .replace(/\\n{3,}/g, '\\n\\n')\n  .trim();\n\n\nreturn [\n  {\n    json: {\n      article: finalArticle,\n      image_url_1: url1,\n      image_url_2: url2,\n      image_url_3: url3,\n      image_file_id_1: image1.id,\n      image_file_id_2: image2.id,\n      image_file_id_3: image3.id\n    }\n  }\n];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -332,6 +198,264 @@
       ],
       "id": "3fde4ed3-f2b8-4f7d-a130-b153ecc9153e",
       "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $json.id }}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert",
+              "text": "={{ $('Code in JavaScript1').item.json.article }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        400,
+        320
+      ],
+      "id": "1d860bc0-2130-4bc5-a973-09931c89ff4c",
+      "name": "Update a document",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "pJk2IsJ072QbG3i6",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\nconst article = data.article ?? '';\n\nif (!article) {\n  throw new Error('找不到合併後的文章內容');\n}\n\nconst chineseCharacterCount = (\n  article.match(/[\\u4e00-\\u9fff]/g) || []\n).length;\n\nif (chineseCharacterCount < 1500 || chineseCharacterCount > 1900) {\n  throw new Error(\n    `文章中文字數不符合要求：目前 ${chineseCharacterCount} 字；目標範圍為 1500–1900 字。`\n  );\n}\n\nreturn [\n  {\n    json: {\n      article,\n      chineseCharacterCount,\n    },\n  },\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1072,
+        -160
+      ],
+      "id": "21378c09-6316-4d6c-9ac7-b2735edb8b0d",
+      "name": "Validate article length Code node"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=請根據以下文章內容，產生三張圖片的繁體中文生成 Prompt，加入台灣味。\n每張圖片都必須是無文字的情境插圖或寫實商業攝影：\nno text, no Chinese characters, no English letters, no numbers,\nno typography, no slogan, no watermark, no logo, no UI.\n\n圖片要呈現與文章段落相符的使用情境、人物、產品或生活場景，加入台灣味；\n不要在圖片中放任何可讀文字，可以是情境圖、流程圖、分鏡圖。\n\n文章：{{ $json.article }}\n\n請只輸出 JSON 陣列，格式如下：\n[\n  {\"prompt\":\"...\",\"size\":\"1024x1024\"},\n  {\"prompt\":\"...\",\"size\":\"1024x1024\"},\n  {\"prompt\":\"...\",\"size\":\"1024x1024\"}\n]\n不要加任何其他文字，不要使用 Markdown code block。"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        -96,
+        80
+      ],
+      "id": "fce3d1dd-5f07-4993-8ae5-b6bdd41197d4",
+      "name": "Generate image prompts",
+      "credentials": {
+        "openAiApi": {
+          "id": "bSjW3fY1Jb3Omyni",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $input.first().json;\n\nconst text =\n  input.output?.[0]?.content?.find(item => item.type === 'output_text')?.text ??\n  input.output?.[0]?.content?.[0]?.text ??\n  input.output_text ??\n  input.text ??\n  '';\n\nif (!text) {\n  throw new Error('找不到模型輸出文字');\n}\n\nconst start = text.indexOf('[');\nconst end = text.lastIndexOf(']');\n\nif (start === -1 || end === -1 || end <= start) {\n  throw new Error('找不到 JSON 陣列');\n}\n\nconst jsonStr = text.slice(start, end + 1);\n\nlet imagePrompts;\ntry {\n  imagePrompts = JSON.parse(jsonStr);\n} catch (error) {\n  throw new Error(`JSON 解析失敗：${error.message}`);\n}\n\nif (!Array.isArray(imagePrompts) || imagePrompts.length < 3) {\n  throw new Error('圖片 prompt 必須至少 3 個');\n}\n\nreturn [{\n  json: {\n    image_prompt_1: imagePrompts[0].prompt,\n    image_prompt_2: imagePrompts[1].prompt,\n    image_prompt_3: imagePrompts[2].prompt,\n    image_size_1: imagePrompts[0].size || '1024x1024',\n    image_size_2: imagePrompts[1].size || '1024x1024',\n    image_size_3: imagePrompts[2].size || '1024x1024',\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        208,
+        80
+      ],
+      "id": "9a7e5595-d8b1-4001-b5d1-b805384fa324",
+      "name": "Parse image prompts"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-image-2-2026-04-21",
+          "mode": "list",
+          "cachedResultName": "GPT-IMAGE-2-2026-04-21"
+        },
+        "prompt": "={{ $json.image_prompt_1 }}",
+        "options": {
+          "quality": "medium",
+          "size": "1024x1024"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        384,
+        80
+      ],
+      "id": "ff874408-2128-42a7-979d-896e825a2c4c",
+      "name": "Generate image 1",
+      "credentials": {
+        "openAiApi": {
+          "id": "bSjW3fY1Jb3Omyni",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-image-2-2026-04-21",
+          "mode": "list",
+          "cachedResultName": "GPT-IMAGE-2-2026-04-21"
+        },
+        "prompt": "={{ $('Parse image prompts').item.json.image_prompt_2 }}",
+        "options": {
+          "quality": "medium",
+          "size": "1024x1024"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        688,
+        80
+      ],
+      "id": "8fba4bec-21ea-4dc9-85f9-321558c2ce10",
+      "name": "Generate image 2",
+      "credentials": {
+        "openAiApi": {
+          "id": "bSjW3fY1Jb3Omyni",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-image-2-2026-04-21",
+          "mode": "list",
+          "cachedResultName": "GPT-IMAGE-2-2026-04-21"
+        },
+        "prompt": "={{ $('Parse image prompts').item.json.image_prompt_3 }}",
+        "options": {
+          "quality": "medium",
+          "size": "1024x1024"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        960,
+        80
+      ],
+      "id": "12183522-fe22-410d-a069-d427d5c32f36",
+      "name": "Generate image 3",
+      "credentials": {
+        "openAiApi": {
+          "id": "bSjW3fY1Jb3Omyni",
+          "name": "OpenAI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "folderId": "={{ $('Create folder').first().json.id }}",
+        "title": "=SEO文章_{{ $('Webhook').first().json.body.keyword }}"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        224,
+        320
+      ],
+      "id": "8c27b470-75c9-4552-9fb6-1c4304aa7529",
+      "name": "Write article to Google Doc",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "pJk2IsJ072QbG3i6",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://docs.googleapis.com/v1/documents/{{ $('Write article to Google Doc' ).first().json.id }}\n",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleDocsOAuth2Api",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        560,
+        320
+      ],
+      "id": "4a1c55f4-2caa-49f9-9084-dd5e61ab2159",
+      "name": "Get Google Doc structure",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "pJk2IsJ072QbG3i6",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// n8n Code node\n// Node name suggestion: Find marker positions and build image requests\n// Place this node immediately after: Get Google Doc structure\n// Mode: Run Once for All Items\n\nconst googleDoc = $input.first().json;\n// 測試尾端節點時設為 true；正式完整 workflow 前改回 false。\nconst TEST_MODE = false;\n\nconst source = TEST_MODE\n  ? {\n      image_url_1: 'https://drive.google.com/uc?export=view&id=15NIjoUK_jqx36IFI8eDgDorCPEMkTIG3',\n      image_url_2: 'https://drive.google.com/uc?export=view&id=1ba5IjZWDVrJQZmkeW2gffTU5olhl5PrY',\n      image_url_3: 'https://drive.google.com/uc?export=view&id=1rdUb39zuPVkC4PXuvHgj1Z_ZhJ4rTqPN',\n    }\n  : $('Code in JavaScript1' ).first().json;\n\n\nconst imageSpecs = [\n  { marker: '[IMAGE_1]', url: source.image_url_1 },\n  { marker: '[IMAGE_2]', url: source.image_url_2 },\n  { marker: '[IMAGE_3]', url: source.image_url_3 },\n];\n\nfor (const image of imageSpecs) {\n  if (!image.url || !image.url.startsWith('https://')) {\n    throw new Error(`找不到 ${image.marker} 對應的 HTTPS 圖片網址`);\n  }\n}\n\n// Google Docs GET 回傳中，body.content 是一系列段落／結構區塊；\n// 每個 paragraph.elements 的 textRun.content 可能包含 marker。\nfunction findMarkerStartIndex(marker) {\n  const contentBlocks = googleDoc.body?.content ?? [];\n\n  for (const block of contentBlocks) {\n    const elements = block.paragraph?.elements ?? [];\n\n    for (const element of elements) {\n      const text = element.textRun?.content ?? '';\n      const offset = text.indexOf(marker);\n\n      if (offset !== -1) {\n        return element.startIndex + offset;\n      }\n    }\n  }\n\n  throw new Error(`Google Docs 中找不到 ${marker}；請確認文章寫入時保留了 marker。`);\n}\n\nconst markerPositions = imageSpecs.map((image) => ({\n  ...image,\n  startIndex: findMarkerStartIndex(image.marker),\n}));\n\n// 一律從文件後方處理到前方，避免後面的刪除／插入改變前面 marker 的 index。\nmarkerPositions.sort((a, b) => b.startIndex - a.startIndex);\n\nconst requests = [];\nfor (const image of markerPositions) {\n  requests.push(\n    {\n      deleteContentRange: {\n        range: {\n          startIndex: image.startIndex,\n          // 只刪除 [IMAGE_X] 本身，保留其後的換行，讓圖片獨立成段。\n          endIndex: image.startIndex + image.marker.length,\n        },\n      },\n    },\n    {\n      insertInlineImage: {\n        uri: image.url,\n        location: {\n          index: image.startIndex,\n        },\n        objectSize: {\n          width: {\n            magnitude: 400,\n            unit: 'PT',\n          },\n        },\n      },\n    },\n  );\n}\n\nreturn [\n  {\n    json: {\n      documentId: googleDoc.documentId,\n      markerPositions: markerPositions.map(({ marker, startIndex }) => ({ marker, startIndex })),\n      // 保留成字串，HTTP Request 的完整 JSON Body expression 可直接使用。\n      batchUpdateBody: JSON.stringify({ requests }),\n    },\n  },\n];\n\n// 本次文件的預期 marker 位置示例為：\n// [IMAGE_3] → 745、[IMAGE_2] → 512、[IMAGE_1] → 211。\n// 每次產生新文章時，程式會重新讀取 Google Docs API 回傳內容，自動得到新的位置。\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        320
+      ],
+      "id": "634fed7b-8f87-4fec-921f-9fb42fbf91d1",
+      "name": "Find markers and build image requests"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://docs.googleapis.com/v1/documents/{{ $json.documentId }}:batchUpdate",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleDocsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.batchUpdateBody }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        896,
+        320
+      ],
+      "id": "4c71dcce-3427-47ed-8f29-cf40502ffac9",
+      "name": "Insert images into Google Doc",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "pJk2IsJ072QbG3i6",
+          "name": "Google Docs account"
+        }
+      }
     },
     {
       "parameters": {
@@ -358,12 +482,12 @@
             "圖片 2": "={{ $('Code in JavaScript1').item.json.image_url_2 }}",
             "圖片 3": "={{ $('Code in JavaScript1').item.json.image_url_3 }}",
             "關鍵字": "={{ $('Webhook').item.json.body.keyword }}",
-            "row_number": 0,
             "資料夾連結": "={{ 'https://drive.google.com/drive/folders/' + $('Create folder').first().json.id }}",
-            "文章連結": "={{ 'https://docs.google.com/document/d/' + $('Create a document').first().json.id + '/edit' }}"
+            "文章連結": "={{ 'https://docs.google.com/document/d/' + $('Write article to Google Doc').first().json.id + '/edit' }}",
+            "row_number": "={{ Number($('Webhook').first().json.body.row) }}"
           },
           "matchingColumns": [
-            "關鍵字"
+            "row_number"
           ],
           "schema": [
             {
@@ -476,11 +600,11 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        688,
+        1072,
         320
       ],
       "id": "5a5b80ed-01f1-4f8f-aae5-c33e1eb8f3cf",
-      "name": "Update row in sheet",
+      "name": "Update correct Google Sheet row",
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "UhzV6BUsyh4kIFst",
@@ -490,51 +614,67 @@
     },
     {
       "parameters": {
-        "folderId": "={{ $('Create folder').first().json.id }}",
-        "title": "=SEO文章_{{ $('Webhook').first().json.body.keyword }}"
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=請根據以下資訊，撰寫同一篇繁體中文 SEO 文章的「後半部」。\n\n主要關鍵字：{{ $('Webhook').item.json.body.keyword }}\n銷售產品：{{ $('Webhook').item.json.body.product }}\n讀者情境：{{ $('Webhook').item.json.body.scenario }}\n\n以下是已完成的前半部，請延續其主題與語氣，但不要重複前半部內容：\n\n{{ $('Message a model').first().json.output[0].content[0].text }}\n\n只寫第三與第四個完整段落，總長度必須為 1,100–1,200 個繁體中文字；每個段落至少 520 個繁體中文字。\n請用具體比較、選購條件、使用步驟、常見限制與注意事項補足內容，不要在內容完整以前提早總結或結束。\n\n輸出格式必須依序為：\n第三個動態小標題（單獨一行；要對應第三段內容）\n第三段：比較 2–3 種相關選擇並提供實際選購建議；在段落結尾只放一次 [IMAGE_3]。\n第四個動態小標題（單獨一行；要對應第四段內容）\n第四段：說明正確使用方式、注意事項與結論；第四段結尾不得出現任何 IMAGE marker。\n\n內容自然、實用；不要捏造產品規格、價格、研究證據或使用者評價。\n\n只輸出後半部文章，不要重複主標題、第一或第二段，不要輸出 JSON、字數統計、說明文字或 Markdown code block。\n輸出前確認：後半部至少 1,100 個繁體中文字；[IMAGE_3] 只出現一次，文章最後一行不能是 IMAGE marker。若不足 1,100 字，請先補充具體內容再輸出。"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {
+          "maxTokens": 3000
+        }
       },
-      "type": "n8n-nodes-base.googleDocs",
-      "typeVersion": 2,
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
       "position": [
-        272,
-        320
+        592,
+        -160
       ],
-      "id": "8c27b470-75c9-4552-9fb6-1c4304aa7529",
-      "name": "Create a document",
+      "id": "1b22941f-57b2-4f02-b486-9ecd5900743b",
+      "name": "Write article part 2",
       "credentials": {
-        "googleDocsOAuth2Api": {
-          "id": "pJk2IsJ072QbG3i6",
-          "name": "Google Docs account"
+        "openAiApi": {
+          "id": "bSjW3fY1Jb3Omyni",
+          "name": "OpenAI account"
         }
       }
     },
     {
       "parameters": {
-        "operation": "update",
-        "documentURL": "={{ $json.id }}",
-        "actionsUi": {
-          "actionFields": [
-            {
-              "action": "insert",
-              "text": "={{ $('Code in JavaScript1').item.json.article }}"
-            }
-          ]
-        }
+        "jsCode": "function getArticleText(nodeName) {\n  const data = $(nodeName).first().json;\n\n  return (\n    data.output?.[0]?.content?.find(item => item.type === 'output_text')?.text ??\n    data.output?.[0]?.content?.[0]?.text ??\n    data.output_text ??\n    data.text ??\n    ''\n  ).trim();\n}\n\nconst part1 = getArticleText('Message a model');\nconst part2 = getArticleText('Write article part 2');\n\nif (!part1 || !part2) {\n  throw new Error('找不到文章前半部或後半部內容');\n}\n\nconst article = `${part1}\\n\\n${part2}`;\nconst chineseCharacterCount = (article.match(/[\\u4e00-\\u9fff]/g) || []).length;\n\nreturn [\n  {\n    json: {\n      article,\n      chineseCharacterCount,\n    },\n  },\n];"
       },
-      "type": "n8n-nodes-base.googleDocs",
+      "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        480,
-        320
+        880,
+        -160
       ],
-      "id": "1d860bc0-2130-4bc5-a973-09931c89ff4c",
-      "name": "Update a document",
-      "credentials": {
-        "googleDocsOAuth2Api": {
-          "id": "pJk2IsJ072QbG3i6",
-          "name": "Google Docs account"
-        }
-      }
+      "id": "4002146e-ae50-4251-bc45-3e0f7df1dda2",
+      "name": "Merge article parts"
+    },
+    {
+      "parameters": {
+        "content": "# SEO Content Pipeline — Workflow Summary\n## Repository (workflow JSON, README, and Google Apps Script):\nhttps://github.com/Brittany3112/SEO-Content-n8n-Pipeline\n\n## Input: Google Sheet row with Keyword, Product, and Scenario.\n\n1. Create a Google Drive folder for the run.\n2. Generate the article in two parts, with dynamic subheadings and IMAGE_1–3 markers.\n3. Merge both parts and validate the Traditional Chinese character count before image generation.\n4. Generate three text-free contextual images with GPT Image 2 and upload them to the run folder.\n5. Write the article to Google Docs with temporary markers.\n6. Read the new document structure, locate each marker index, then delete markers and insert native inline images through Google Docs API batchUpdate.\n7. Write the article URL, folder URL, article text, and image URLs back to the same Google Sheet row using row_number.\n\n## Design safeguards:\n• Stop before image generation when article length fails validation.\n• Keep only one occurrence of each IMAGE marker and place markers on their own lines.\n• Process marker replacement from the end of the document to the beginning so indexes remain valid.\n\n## How to run locally:\n• Start n8n: `npx n8n`\n• Check the local URL printed by n8n, for example `http://localhost:5678` or `http://localhost:7890`.\n• Start the public tunnel using the SAME local port:\n  `cloudflared tunnel --url http://localhost:5678`\n  or\n  `cloudflared tunnel --url http://localhost:7890`\n• Update the current tunnel URL in the Google Apps Script constant `N8N_WEBHOOK_URL`.\n\n## The complete Google Apps Script trigger code and the latest n8n workflow export are available in the repository above.\n",
+        "height": 912,
+        "width": 816,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1008,
+        -208
+      ],
+      "typeVersion": 1,
+      "id": "52369353-6c22-4c22-8bbb-b906e60145b7",
+      "name": "Sticky Note"
     }
   ],
   "pinData": {},
@@ -554,62 +694,7 @@
       "main": [
         [
           {
-            "node": "Message a model1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Code in JavaScript": {
-      "main": [
-        [
-          {
-            "node": "Generate an image1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Generate an image1": {
-      "main": [
-        [
-          {
-            "node": "Upload file",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Generate an image": {
-      "main": [
-        [
-          {
-            "node": "Upload file1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Message a model1": {
-      "main": [
-        [
-          {
-            "node": "Code in JavaScript",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Generate an image2": {
-      "main": [
-        [
-          {
-            "node": "Upload file2",
+            "node": "Write article part 2",
             "type": "main",
             "index": 0
           }
@@ -631,7 +716,7 @@
       "main": [
         [
           {
-            "node": "Generate an image",
+            "node": "Generate image 2",
             "type": "main",
             "index": 0
           }
@@ -642,7 +727,7 @@
       "main": [
         [
           {
-            "node": "Generate an image2",
+            "node": "Generate image 3",
             "type": "main",
             "index": 0
           }
@@ -664,18 +749,7 @@
       "main": [
         [
           {
-            "node": "Create a document",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Create a document": {
-      "main": [
-        [
-          {
-            "node": "Update a document",
+            "node": "Write article to Google Doc",
             "type": "main",
             "index": 0
           }
@@ -686,7 +760,139 @@
       "main": [
         [
           {
-            "node": "Update row in sheet",
+            "node": "Get Google Doc structure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate article length Code node": {
+      "main": [
+        [
+          {
+            "node": "Generate image prompts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate image prompts": {
+      "main": [
+        [
+          {
+            "node": "Parse image prompts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse image prompts": {
+      "main": [
+        [
+          {
+            "node": "Generate image 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate image 1": {
+      "main": [
+        [
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate image 2": {
+      "main": [
+        [
+          {
+            "node": "Upload file1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate image 3": {
+      "main": [
+        [
+          {
+            "node": "Upload file2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write article to Google Doc": {
+      "main": [
+        [
+          {
+            "node": "Update a document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Google Doc structure": {
+      "main": [
+        [
+          {
+            "node": "Find markers and build image requests",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find markers and build image requests": {
+      "main": [
+        [
+          {
+            "node": "Insert images into Google Doc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert images into Google Doc": {
+      "main": [
+        [
+          {
+            "node": "Update correct Google Sheet row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write article part 2": {
+      "main": [
+        [
+          {
+            "node": "Merge article parts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge article parts": {
+      "main": [
+        [
+          {
+            "node": "Validate article length Code node",
             "type": "main",
             "index": 0
           }
@@ -702,7 +908,7 @@
     "timeSavedMode": "fixed",
     "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "b8fe807c-b883-4e82-a08e-1295ce4682b9",
+  "versionId": "c14d96f1-bcea-4e32-9338-40eaff0e4de5",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "68e0cfec20005314ffce5e6212c1dd99c17db35ae735d515b8b6027d37d26950"
