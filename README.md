@@ -1,4 +1,4 @@
-# n8n SEO 內容生成工具｜n8n SEO Content Pipeline
+# n8n SEO 內容生成工具｜SEO Content Pipeline
 
 [English version](#english)
 
@@ -96,7 +96,11 @@ const N8N_WEBHOOK_URL =
 startGeneration
 ```
 
-輸入關鍵字、產品與情境後，按鈕會將該 row 傳送至 n8n；完成後，工作流會將結果寫回同一 row。
+**使用時，請先點選要處理那一列中的任一儲存格**（不要選標題列），再按 **「開始產生這行的 SEO 文章」** 按鈕。Apps Script 會讀取目前 active row 的關鍵字、產品、情境與 `row_number`，將它們傳送至 n8n；完成後，工作流會將結果寫回同一 row。若未先選取正確列，資料可能會從錯誤的 row 送出或寫回。
+
+### Browser and Google Account Troubleshooting
+
+Google Sheet 與 Apps Script 必須以具有該 Sheet 存取權的 Google 帳號開啟。若在一般瀏覽器視窗無法開啟、看見權限提示或 Apps Script 行為異常，請先確認目前登入的 Google 帳號是否正確，並重新整理頁面。若瀏覽器同時登入多個 Google 帳號或保留舊 session，無痕視窗可作為排除帳號／快取衝突的測試方式；**無痕模式不是此 workflow 的必要條件**。
 
 ## Self-host n8n
 
@@ -242,7 +246,11 @@ Open the button menu in Google Sheets, choose **Assign script**, and enter the t
 startGeneration
 ```
 
-The button sends the selected input row to n8n. The workflow writes the final result back to the same row.
+**Before using the button, click any cell in the data row you want to process** (not the header row), then click **“開始產生這行的 SEO 文章”**. The Apps Script reads the active row’s keyword, product, scenario, and `row_number`, sends them to n8n, and the workflow writes the result back to that same row. If the correct row is not selected first, the input or output may be associated with the wrong row.
+
+### Browser and Google Account Troubleshooting
+
+Open the Google Sheet and Apps Script using a Google account that has access to the copied Sheet. If the Sheet does not open, shows a permission prompt, or the Apps Script behaves unexpectedly in a normal browser window, first verify the active Google account and refresh the page. When multiple Google accounts or an old browser session cause a conflict, an incognito window can be used to test with a clean session; **incognito mode is not a workflow requirement**.
 
 ## Self-host n8n
 
