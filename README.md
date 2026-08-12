@@ -43,7 +43,7 @@ Google Sheet / Button
 Repository 會包含 Google Apps Script 檔案：
 
 ```text
-apps-script/Code.gs
+Code.js
 ```
 
 此程式負責讀取目前 Sheet row 的輸入欄位、呼叫 n8n webhook，並提供 Google Sheet 按鈕可指派的觸發函式。
@@ -69,12 +69,12 @@ Extensions → Apps Script
 清除預設內容，貼上 repository 的：
 
 ```text
-apps-script/Code.gs
+Code.js
 ```
 
 ### 3. 設定 webhook URL
 
-在 `Code.gs` 中找到：
+在 `Code.js` 中找到：
 
 ```javascript
 const N8N_WEBHOOK_URL = "...";
@@ -91,7 +91,7 @@ const N8N_WEBHOOK_URL =
 
 ### 4. 指派 Sheet 按鈕
 
-在 Sheet 中點選按鈕右上角選單，選擇 **Assign script**，輸入 `Code.gs` 中定義的按鈕函式名稱，例如：
+在 Sheet 中點選按鈕右上角選單，選擇 **Assign script**，輸入 `Code.js` 中定義的按鈕函式名稱，例如：
 
 ```text
 startGeneration
@@ -151,24 +151,23 @@ https://example-name.trycloudflare.com
 
 ### 3. 更新 Apps Script
 
-將最新 Tunnel URL 更新至 `Code.gs` 的 `N8N_WEBHOOK_URL`。
+將最新 Tunnel URL 更新至 `Code.js` 的 `N8N_WEBHOOK_URL`。
 
 > Cloudflare temporary tunnel 在重啟後可能變更網址；變更後需更新 Apps Script。n8n、Tunnel 與本機電腦必須保持運作，Sheet 按鈕才能觸發 workflow。
 
 ## 匯入與設定 workflow
 
-1. 在 n8n 選擇 **Import from File**，匯入最新 `n8n-workflow.json`。
+1. 在 n8n 選擇 **Import from File**，匯入最新 `My workflow.json`。
 2. 重新設定 OpenAI、Google Drive、Google Docs 與 Google Sheets credentials。
-3. 確認 workflow webhook path 與 `Code.gs` 中的 URL 一致。
+3. 確認 workflow webhook path 與 `Code.js` 中的 URL 一致。
 4. 儲存並 Publish workflow。
 
 ## 專案檔案
 
 ```text
 /
-├── n8n-workflow.json
-├── apps-script/
-│   └── Code.gs
+├── Code.js
+├── My workflow.json
 ├── README.md
 └── example output PDF(s)
 ```
@@ -197,7 +196,7 @@ This is an SEO content workflow built with **n8n, Google Sheets, Google Drive, a
 The repository includes the Google Apps Script trigger code:
 
 ```text
-apps-script/Code.gs
+Code.js
 ```
 
 The script reads the current Sheet row, sends the keyword/product/scenario to the n8n webhook, and exposes the function assigned to the Sheet button.
@@ -223,12 +222,12 @@ Extensions → Apps Script
 Replace the default code with the repository file:
 
 ```text
-apps-script/Code.gs
+Code.js
 ```
 
 ### 3. Set the Webhook URL
 
-In `Code.gs`, replace the webhook constant with the current public Tunnel URL and your n8n webhook path:
+In `Code.js`, replace the webhook constant with the current public Tunnel URL and your n8n webhook path:
 
 ```javascript
 const N8N_WEBHOOK_URL =
@@ -239,7 +238,7 @@ Save the script and complete Google's authorization prompt on first use.
 
 ### 4. Assign the Sheet Button
 
-Open the button menu in Google Sheets, choose **Assign script**, and enter the trigger function defined in `Code.gs`, for example:
+Open the button menu in Google Sheets, choose **Assign script**, and enter the trigger function defined in `Code.js`, for example:
 
 ```text
 startGeneration
@@ -275,24 +274,23 @@ If n8n shows `http://localhost:7890`:
 cloudflared tunnel --url http://localhost:7890
 ```
 
-Copy the generated public URL into the `N8N_WEBHOOK_URL` constant in `Code.gs`.
+Copy the generated public URL into the `N8N_WEBHOOK_URL` constant in `Code.js`.
 
-> The temporary tunnel URL can change after restart. Update `Code.gs` when it changes. The local computer, n8n, and tunnel must remain running for the Sheet button to trigger the workflow.
+> The temporary tunnel URL can change after restart. Update `Code.js` when it changes. The local computer, n8n, and tunnel must remain running for the Sheet button to trigger the workflow.
 
 ## Import Workflow
 
-1. Select **Import from File** in n8n and import the latest `n8n-workflow.json`.
+1. Select **Import from File** in n8n and import the latest `My workflow.json`.
 2. Reconnect OpenAI, Google Drive, Google Docs, and Google Sheets credentials.
-3. Confirm that the workflow webhook path matches the URL configured in `Code.gs`.
+3. Confirm that the workflow webhook path matches the URL configured in `Code.js`.
 4. Save and publish the workflow.
 
 ## Project Files
 
 ```text
 /
-├── n8n-workflow.json
-├── apps-script/
-│   └── Code.gs
+├── Code.js
+├── My workflow.json
 ├── README.md
 └── example output PDF(s)
 ```
