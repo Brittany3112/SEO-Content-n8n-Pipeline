@@ -229,7 +229,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const data = $input.first().json;\nconst article = data.article ?? '';\n\nif (!article) {\n  throw new Error('找不到合併後的文章內容');\n}\n\nconst chineseCharacterCount = (\n  article.match(/[\\u4e00-\\u9fff]/g) || []\n).length;\n\nif (chineseCharacterCount < 1500 || chineseCharacterCount > 1900) {\n  throw new Error(\n    `文章中文字數不符合要求：目前 ${chineseCharacterCount} 字；目標範圍為 1500–1900 字。`\n  );\n}\n\nreturn [\n  {\n    json: {\n      article,\n      chineseCharacterCount,\n    },\n  },\n];"
+        "jsCode": "const data = $input.first().json;\nconst article = data.article ?? '';\n\nif (!article) {\n  throw new Error('找不到合併後的文章內容');\n}\n\nconst chineseCharacterCount = (\n  article.match(/[\\u4e00-\\u9fff]/g) || []\n).length;\n\nif (chineseCharacterCount < 1500 || chineseCharacterCount > 2100) {\n  throw new Error(\n    `文章中文字數不符合要求：目前 ${chineseCharacterCount} 字；目標範圍為 1500–2100 字。`\n  );\n}\n\nreturn [\n  {\n    json: {\n      article,\n      chineseCharacterCount,\n    },\n  },\n];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -908,7 +908,7 @@
     "timeSavedMode": "fixed",
     "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "d9bae30a-1896-4137-a704-e1798668f271",
+  "versionId": "e1069d20-fb27-4c5d-96c5-206188509a2c",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "68e0cfec20005314ffce5e6212c1dd99c17db35ae735d515b8b6027d37d26950"
