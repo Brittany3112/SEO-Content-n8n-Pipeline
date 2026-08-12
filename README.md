@@ -98,7 +98,7 @@ startGeneration
 
 **使用時，請先點選要處理那一列中的任一儲存格**（不要選標題列），再按 **「開始產生這行的 SEO 文章」** 按鈕。Apps Script 會讀取目前 active row 的關鍵字、產品、情境與 `row_number`，將它們傳送至 n8n；完成後，工作流會將結果寫回同一 row。若未先選取正確列，資料可能會從錯誤的 row 送出或寫回。
 
-### Browser and Google Account Troubleshooting
+### 瀏覽器與 Google 帳號問題排查
 
 Google Sheet 與 Apps Script 必須以具有該 Sheet 存取權的 Google 帳號開啟。若在一般瀏覽器視窗無法開啟、看見權限提示或 Apps Script 行為異常，請先確認目前登入的 Google 帳號是否正確，並重新整理頁面。若瀏覽器同時登入多個 Google 帳號或保留舊 session，無痕視窗可作為排除帳號／快取衝突的測試方式；**無痕模式不是此 workflow 的必要條件**。
 
