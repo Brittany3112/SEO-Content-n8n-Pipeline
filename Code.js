@@ -5,10 +5,10 @@ function triggerN8n() {
   var keyword = sheet.getRange(row, 2).getValue();
   var product = sheet.getRange(row, 3).getValue();
   var scenario = sheet.getRange(row, 4).getValue();
-  var folderId = sheet.getRange(row, 5).getValue();
+  var folderId = sheet.getRange(row, 6).getValue();
   
   // 已經幫妳替換成剛剛取得的網址
-  var webhookUrl = "https://ventures-eliminate-accepted-focusing.trycloudflare.com/webhook/seo-article"; 
+  var webhookUrl = "https://your-gst-affected-etc.trycloudflare.com/webhook/seo-article"; 
   
   var payload = {
     "keyword": keyword,
@@ -26,3 +26,6 @@ function triggerN8n() {
     },
     "payload": JSON.stringify(payload)
   });
+  
+  sheet.getRange(row, 5).setValue("產出中...");
+}
