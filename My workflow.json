@@ -662,15 +662,15 @@
     },
     {
       "parameters": {
-        "content": "# SEO Content Pipeline — Workflow Summary\n## Repository (workflow JSON, README, and Google Apps Script):\nhttps://github.com/Brittany3112/SEO-Content-n8n-Pipeline\n\n## Input: Google Sheet row with Keyword, Product, and Scenario.\n\n1. Create a Google Drive folder for the run.\n2. Generate the article in two parts, with dynamic subheadings and IMAGE_1–3 markers.\n3. Merge both parts and validate the Traditional Chinese character count before image generation.\n4. Generate three text-free contextual images with GPT Image 2 and upload them to the run folder.\n5. Write the article to Google Docs with temporary markers.\n6. Read the new document structure, locate each marker index, then delete markers and insert native inline images through Google Docs API batchUpdate.\n7. Write the article URL, folder URL, article text, and image URLs back to the same Google Sheet row using row_number.\n\n## Design safeguards:\n• Stop before image generation when article length fails validation.\n• Keep only one occurrence of each IMAGE marker and place markers on their own lines.\n• Process marker replacement from the end of the document to the beginning so indexes remain valid.\n\n## How to run locally:\n• Start n8n: `npx n8n`\n• Check the local URL printed by n8n, for example `http://localhost:5678` or `http://localhost:7890`.\n• Start the public tunnel using the SAME local port:\n  `cloudflared tunnel --url http://localhost:5678`\n  or\n  `cloudflared tunnel --url http://localhost:7890`\n• Update the current tunnel URL in the Google Apps Script constant `N8N_WEBHOOK_URL`.\n\n## The complete Google Apps Script trigger code and the latest n8n workflow export are available in the repository above.\n",
-        "height": 912,
-        "width": 816,
+        "content": "# SEO Content Pipeline — Workflow Summary\n\n**Repository** (workflow JSON, README, and Google Apps Script):\nhttps://github.com/Brittany3112/SEO-Content-n8n-Pipeline\n\n## Trigger from Google Sheets\n\n1. Enter the **Keyword**, **Product**, and **Scenario** in one data row.\n2. Click **any cell in that same row**. Do not select the header row.\n3. Click the **「開始產生這行的 SEO 文章」** button.\n\nThe Apps Script reads the active row’s keyword, product, scenario, and `row_number`, sends them to n8n, and writes the completed output back to the **same row**.\n\n## Workflow Steps After Triggering\n\n1. Create a run-specific Google Drive folder.\n2. Generate the SEO article in two parts with dynamic subheadings and `[IMAGE_1]`–`[IMAGE_3]` markers.\n3. Merge both parts and validate the Traditional Chinese character count before generating images.\n4. Generate three text-free contextual images with GPT Image 2 and upload them to the run folder.\n5. Write the article to Google Docs with temporary image markers.\n6. Read the document structure, locate each marker, then use Google Docs API `batchUpdate` to replace the markers with native inline images.\n7. Update the same Google Sheet row using `row_number` with the article, Google Docs URL, Drive folder URL, and image URLs.\n\n## Design Safeguards\n\n- Stop before image generation when article-length validation fails.\n- Keep only the first occurrence of each image marker and place every marker on its own line.\n- Replace markers from the end of the document to the beginning so document indexes remain valid.\n\n## Run Locally\n\n- Start n8n: `npx n8n`\n- Check the local URL printed by n8n, for example `http://localhost:5678` or `http://localhost:7890`.\n- Start Cloudflare Tunnel with the **same local port**:\n  `cloudflared tunnel --url http://localhost:5678`\n  or\n  `cloudflared tunnel --url http://localhost:7890`\n- Update the current tunnel URL in the Google Apps Script constant `N8N_WEBHOOK_URL`.\n\nThe repository above contains the complete Google Apps Script trigger code and the latest n8n workflow export.\n",
+        "height": 1008,
+        "width": 1136,
         "color": 3
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -1008,
-        -208
+        -1328,
+        -224
       ],
       "typeVersion": 1,
       "id": "52369353-6c22-4c22-8bbb-b906e60145b7",
@@ -908,7 +908,7 @@
     "timeSavedMode": "fixed",
     "callerPolicy": "workflowsFromSameOwner"
   },
-  "versionId": "c14d96f1-bcea-4e32-9338-40eaff0e4de5",
+  "versionId": "d9bae30a-1896-4137-a704-e1798668f271",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "68e0cfec20005314ffce5e6212c1dd99c17db35ae735d515b8b6027d37d26950"
