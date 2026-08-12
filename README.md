@@ -1,4 +1,4 @@
-# n8n SEO 內容生成工具｜SEO Content Pipeline
+# n8n SEO 內容生成工具｜n8n SEO Content Pipeline
 
 [English version](#english)
 
