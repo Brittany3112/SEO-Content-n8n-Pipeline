@@ -8,6 +8,12 @@
 
 - Google Sheet 範例：[開啟 Sheet](https://docs.google.com/spreadsheets/d/1FnD3XRmuw_B23JNAbtWJXOz67vuobMS0H9Mzp_wMmHo/edit?usp=sharing)
 
+> **Portfolio Project｜作品集專案**
+>
+> 此專案將 Google Sheet 中的一列內容需求，轉換為一篇具結構的繁體中文 SEO 文章、三張情境圖片、Google Drive 資產資料夾，以及附有原生內嵌圖片的 Google Docs 文件。
+>
+> **核心工程設計：**兩段式文章生成、圖片生成前的中文字數驗證、以 `row_number` 確保回寫正確列，以及透過 Google Docs API `batchUpdate` 和 `insertInlineImage` 插入原生圖片。
+
 ### 功能
 
 1. 從 Google Sheet 接收關鍵字、產品與情境。
