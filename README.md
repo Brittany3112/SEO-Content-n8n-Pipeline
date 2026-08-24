@@ -6,11 +6,13 @@
 
 這是一個以 **n8n、Google Sheets、Google Drive 與 Google Docs** 建立的 SEO 內容生成工具。使用者在 Google Sheet 輸入關鍵字、推廣產品與使用情境後，透過按鈕觸發工作流，產生文章、三張配圖與 Google Docs 成果。
 
-- 可操作範例（唯讀輸入／輸出控制面板）：[開啟 Sheet](https://docs.google.com/spreadsheets/d/1FnD3XRmuw_B23JNAbtWJXOz67vuobMS0H9Mzp_wMmHo/edit?usp=sharing)
+- 可操作範例（唯讀輸入／輸出控制面板）：[開啟 Google Sheet](https://docs.google.com/spreadsheets/d/1FnD3XRmuw_B23JNAbtWJXOz67vuobMS0H9Mzp_wMmHo/edit?usp=sharing)
 
-**作品集專案** 此專案將 Google Sheet 中的一列內容需求，轉換為一篇具結構的繁體中文 SEO 文章、三張情境圖片、Google Drive 資產資料夾，以及附有原生內嵌圖片的 Google Docs 文件。
-
-**核心工程設計：** 兩段式文章生成、圖片生成前的中文字數驗證、以 `row_number` 確保回寫正確列，以及透過 Google Docs API `batchUpdate` 和 `insertInlineImage` 插入原生圖片。
+> **Portfolio Project｜作品集專案**
+>
+> 此專案將 Google Sheet 中的一列內容需求，轉換為一篇具結構的繁體中文 SEO 文章、三張情境圖片、Google Drive 資產資料夾，以及附有原生內嵌圖片的 Google Docs 文件。
+>
+> **核心工程設計：** 兩段式文章生成、圖片生成前的中文字數驗證、以 `row_number` 確保結果回寫至正確列，以及透過 Google Docs API 的 `batchUpdate` 與 `insertInlineImage` 插入原生圖片。
 
 ## 成果展示
 
@@ -171,7 +173,7 @@ https://example-name.trycloudflare.com
 ## 匯入與設定 workflow
 
 1. 在 n8n 選擇 **Import from File**，匯入最新 `My workflow.json`。
-2. 重新設定 OpenAI、Google Drive、Google Docs 與 Google Sheets credentials。
+2. 重新設定 OpenAI、Google Drive、Google Docs 與 Google Sheet credentials。
 3. 確認 workflow webhook path 與 `Code.js` 中的 URL 一致。
 4. 儲存並 Publish workflow。
 
@@ -191,7 +193,7 @@ https://example-name.trycloudflare.com
 
 # English
 
-This is an SEO content workflow built with **n8n, Google Sheets, Google Drive, and Google Docs**. A user enters a keyword, product, and scenario in Google Sheets, then triggers the workflow with a button to create an SEO article, three visuals, and a Google Docs result.
+This is an SEO content workflow built with **n8n, Google Sheet, Google Drive, and Google Docs**. A user enters a keyword, product, and scenario in Google Sheet, then triggers the workflow with a button to create an SEO article, three visuals, and a Google Docs result.
 
 - Example Google Sheet: [Open Sheet](https://docs.google.com/spreadsheets/d/1FnD3XRmuw_B23JNAbtWJXOz67vuobMS0H9Mzp_wMmHo/edit?usp=sharing)
 
