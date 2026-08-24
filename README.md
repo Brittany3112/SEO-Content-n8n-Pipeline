@@ -16,8 +16,7 @@
 
 以下為 workflow 自動生成的 Google Docs 成果：結構化文章、段落標題，以及以 Google Docs API 原生插入的情境圖片。
 
-![Google Docs generated SEO content output](<img width="561" height="726" alt="Screenshot 2026-08-24 at 20 23 51" src="https://github.com/user-attachments/assets/c0ce4cca-972b-456d-bba7-9b9b58985624" />
-)
+![Google Docs generated SEO content output](screenshots/google-doc-final-output.png)
 
 ### 功能
 
