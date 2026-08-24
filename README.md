@@ -8,11 +8,17 @@
 
 - Google Sheet 範例：[開啟 Sheet](https://docs.google.com/spreadsheets/d/1FnD3XRmuw_B23JNAbtWJXOz67vuobMS0H9Mzp_wMmHo/edit?usp=sharing)
 
-> **Portfolio Project｜作品集專案**
->
-> 此專案將 Google Sheet 中的一列內容需求，轉換為一篇具結構的繁體中文 SEO 文章、三張情境圖片、Google Drive 資產資料夾，以及附有原生內嵌圖片的 Google Docs 文件。
->
-> **核心工程設計：**兩段式文章生成、圖片生成前的中文字數驗證、以 `row_number` 確保回寫正確列，以及透過 Google Docs API `batchUpdate` 和 `insertInlineImage` 插入原生圖片。
+**Portfolio Project｜作品集專案**
+此專案將 Google Sheet 中的一列內容需求，轉換為一篇具結構的繁體中文 SEO 文章、三張情境圖片、Google Drive 資產資料夾，以及附有原生內嵌圖片的 Google Docs 文件。
+
+**核心工程設計：** 兩段式文章生成、圖片生成前的中文字數驗證、以 `row_number` 確保回寫正確列，以及透過 Google Docs API `batchUpdate` 和 `insertInlineImage` 插入原生圖片。
+
+## 成果展示
+
+以下為 workflow 自動生成的 Google Docs 成果：結構化文章、段落標題，以及以 Google Docs API 原生插入的情境圖片。
+
+![Google Docs generated SEO content output](<img width="561" height="726" alt="Screenshot 2026-08-24 at 20 23 51" src="https://github.com/user-attachments/assets/c0ce4cca-972b-456d-bba7-9b9b58985624" />
+)
 
 ### 功能
 
